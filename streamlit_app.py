@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Define the file path
-DATA_FILENAME = Path(__file__).parent / '/workspaces/blank-app/data/synthetic_data2.csv'
+DATA_FILENAME = Path(__file__).parent / '/data/synthetic_data2.csv'
 
 # Load and cache the data
 @st.cache_data
