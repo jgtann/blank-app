@@ -1,66 +1,116 @@
 import streamlit as st
-import pandas as pd
-from pathlib import Path
-import matplotlib.pyplot as plt
-import seaborn as sns
+import streamlit.components.v1 as components
 
-# Define the file path
-DATA_FILENAME = Path(__file__).parent / '/data/synthetic_data2.csv'
+# Save your HTML content as a string
+html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alphabet Cards</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f0f0f0;
+      padding: 1rem;
+      font-family: Arial, sans-serif;
+    }
 
-# Load and cache the data
-@st.cache_data
-def load_data():
-    """Load the synthetic data."""
-    if DATA_FILENAME.exists():
-        synthetic_df = pd.read_csv(DATA_FILENAME)
-        return synthetic_df
-    else:
-        st.error("The data file was not found. Please check the path and ensure the file exists.")
-        return None
+    .vowels-container {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
 
-# Load the data
-synthetic_df = load_data()
+    .divider {
+      height: 5px;
+      background-color: white;
+      margin: 1rem 0;
+    }
 
-# Streamlit App
-st.title("Data Visualization and Analysis")
-st.subheader("Caveat: the visuals are based on synthetic data and for exploratory purposes only. Not meant for circulation or as a basis for conclusion.")
+    .consonants-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
 
-# Continue only if data loaded successfully
-if synthetic_df is not None:
-    # Filter options based on unique values in the DataFrame
-    measure_options = synthetic_df['Measure'].unique()
-    group_options = synthetic_df['Group'].unique()
-    day_options = synthetic_df['Day'].unique()
+    .consonants-row {
+      display: flex;
+      gap: 0.5rem;
+    }
 
-    # Sidebar filters
-    selected_measure = st.selectbox("Select Measure", measure_options)
-    selected_group = st.multiselect("Select Group(s)", group_options, default=group_options)
-    selected_day = st.multiselect("Select Day(s)", day_options, default=day_options)
+    .card {
+      width: 100px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="vowels-container" id="vowels-container"></div>
+  <div class="divider"></div>
+  <div class="consonants-container" id="consonants-container"></div>
 
-    # Apply the filters to the DataFrame
-    filtered_data = synthetic_df[
-        (synthetic_df['Measure'] == selected_measure) &
-        (synthetic_df['Group'].isin(selected_group)) &
-        (synthetic_df['Day'].isin(selected_day))
-    ]
+  <script>
+    // Define vowels and consonants
+    const vowels = ['A', 'E', 'I', 'O', 'U'];
+    const consonants = [
+      ['B', 'C', 'D'], // Row 1: 3 cards
+      ['F', 'G', 'H', 'J', 'K'], // Row 2: 5 cards
+      ['L', 'M', 'N', 'P', 'Q'], // Row 3: 5 cards
+      ['R', 'S', 'T', 'V', 'W'], // Row 4: 5 cards
+      ['X', 'Y'] // Row 5: 2 cards
+    ];
 
-    # Check if there's data to display after filtering
-    if not filtered_data.empty:
-        # Create a violin plot showing the distribution by day and group
-        fig, ax = plt.subplots(figsize=(10, 6))
-        
-        # Only use split=True if exactly two groups are selected
-        if len(selected_group) == 2:
-            sns.violinplot(data=filtered_data, x='Day', y='Value', hue='Group', split=True, ax=ax)
-        else:
-            sns.violinplot(data=filtered_data, x='Day', y='Value', hue='Group', ax=ax)
+    // Generate a unique color for each card
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
 
-        # Add titles and labels
-        ax.set_title(f'Distribution of {selected_measure} Values by Day and Group')
-        ax.set_xlabel('Day')
-        ax.set_ylabel(f'{selected_measure} Value')
+    // Function to create cards
+    function createCards(letters, rowContainer) {
+      letters.forEach((letter) => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        const color = getRandomColor();
+        card.style.backgroundColor = color;
+        card.style.color = color; // Match letter color to card background
+        card.textContent = letter;
+        rowContainer.appendChild(card);
+      });
+    }
 
-        # Show the plot in Streamlit
-        st.pyplot(fig, clear_figure=True)
-    else:
-        st.write("No data available for the selected filters.")
+    // Populate vowels
+    const vowelsContainer = document.getElementById('vowels-container');
+    createCards(vowels, vowelsContainer);
+
+    // Populate consonants
+    const consonantsContainer = document.getElementById('consonants-container');
+    consonants.forEach((row) => {
+      const rowContainer = document.createElement('div');
+      rowContainer.classList.add('consonants-row');
+      createCards(row, rowContainer);
+      consonantsContainer.appendChild(rowContainer);
+    });
+  </script>
+</body>
+</html>
+"""
+
+# Embed the HTML in the Streamlit app
+st.title("The Silent Way")
+components.html(html_content, height=600, scrolling=True)
