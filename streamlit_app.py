@@ -111,5 +111,5 @@ html_content = """
 """
 
 # Embed the HTML in the Streamlit app
-st.title("HTML in Streamlit")
+st.title("The Silent Way")
 components.html(html_content, height=800, width=900)
