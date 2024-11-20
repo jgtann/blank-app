@@ -12,7 +12,7 @@ html_content = """
   <style>
     body {
       margin: 0;
-      background-color: #f0f0f0;
+      background-color: black; /* Changed background to black */
       padding: 1rem;
       font-family: Arial, sans-serif;
     }
@@ -49,7 +49,7 @@ html_content = """
       justify-content: center;
       align-items: center;
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(255, 255, 255, 0.3); /* Lighter shadow for black background */
       font-size: 1.5rem;
       font-weight: bold;
     }
@@ -83,13 +83,12 @@ html_content = """
 
     // Function to create cards
     function createCards(letters, rowContainer) {
-      letters.forEach((letter) => {
+      letters.forEach(() => { // Removed letter usage
         const card = document.createElement('div');
         card.classList.add('card');
         const color = getRandomColor();
         card.style.backgroundColor = color;
-        card.style.color = color; // Match letter color to card background
-        card.textContent = letter;
+        card.style.color = color; /* Removed text content */
         rowContainer.appendChild(card);
       });
     }
@@ -112,5 +111,5 @@ html_content = """
 """
 
 # Embed the HTML in the Streamlit app
-st.title("The Silent Way")
-components.html(html_content, height=600, scrolling=True)
+st.title("HTML in Streamlit")
+components.html(html_content, height=800, width=900)
